@@ -1,4 +1,4 @@
-# Introduction;
+# Introduction:
 
 A simple program to transfer a message or a file from client to server.
 
