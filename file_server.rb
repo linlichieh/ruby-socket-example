@@ -1,30 +1,21 @@
-#server sends client file over socket
 require 'socket'
+require 'benchmark'
 
-server = TCPServer.open('localhost', 6000)
-
-# Send file
-
-
-loop do 
-#    Thread.start(server.accept) do |client|
-#    file = open('/Users/apple/projects/ruby/socket/ruby-socket-file-transfer/receive/xx.php', "rb")
-#    fileContent = file.read
-#    client.puts(fileContent)
-#    client.close
-    client = server.accept
-    msg = client.gets
-    puts msg
-    client.close
+save_path = "/tmp/ruby_test/receive/"
+if !File.directory?(save_path)
+  puts save_path + " directory doesn't exist."
+  exit
 end
+save_file = save_path + "tmp.txt"
+SIZE = 1024 * 1024 * 10
 
-# Send message
-# loop do
-#   client = server.accept
-#   msg = client.gets
-#   puts "Connection is established ..."
-#   puts "Server received a message from client : #{msg}"
-#   client.puts "Server got your message, over!"
-#   client.close
-#   puts "Connection closed !"
-# end
+server =  TCPServer.new('localhost', 6000)
+puts "Server listening..."
+client = server.accept
+time = Benchmark.realtime do
+  File.open(save_file, 'w') do |file|
+    while chunk = client.read(SIZE)
+      file.write(chunk)
+    end
+  end
+end
